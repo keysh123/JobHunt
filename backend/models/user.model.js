@@ -48,7 +48,8 @@ const userSchema = new mongoose.Schema(
       },
     },
   },
-  {timeSeries : true},
+  { timestamps: true }
+,
 );
 
 export const User = mongoose.model("User", userSchema);

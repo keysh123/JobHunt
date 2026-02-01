@@ -45,5 +45,6 @@ const jobSchema = new mongoose.Schema({
     }
     ]
 
-},{timeSeries : true});
-export const job=mongoose.Model("Job",jobSchema)
+},{ timestamps: true }
+);
+export const Job=mongoose.Model("Job",jobSchema)

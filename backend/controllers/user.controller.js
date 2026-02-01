@@ -1,6 +1,7 @@
-import User from "../models/user.model.js";
+import {User} from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 export const register = async (req, res) => {
   try {
     const { fullName, email, phoneNo, password, role } = req.body;
@@ -109,14 +110,7 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { fullName, email, phoneNo, bio, skills } = req.body;
-    if (!fullName || !email || !phoneNo) {
-      return res
-        .status(400)
-        .json({
-          message: "Full Name, Email and Phone Number are required",
-          success: false,
-        });
-    }
+    
     const skillsArray = skills
       ? skills.split(",").map((skill) => skill.trim())
       : [];
@@ -127,12 +121,22 @@ export const updateProfile = async (req, res) => {
         .status(404)
         .json({ message: "User not found", success: false });
     }
+    if(fullName){
     user.fullName = fullName;
+    }
+    if(email){
     user.email = email;
+    }
+    if(phoneNo){
     user.phoneNo = phoneNo;
-    user.profile.bio = bio || user.profile.bio;
+    }
+    if(bio){
+    user.profile.bio = bio;
+    }
+    if(skills){
     user.profile.skills =
       skillsArray.length > 0 ? skillsArray : user.profile.skills;
+    }
     await user.save();
     return res.status(200).json({
       message: "Profile updated successfully",
