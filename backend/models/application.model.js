@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const applicationSchema = newmongoose.Schema({
+const applicationSchema = new mongoose.Schema({
     job : {
         type:mongoose.Schema.Types.ObjectId,
         ref: "Job",
