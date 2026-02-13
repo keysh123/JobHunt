@@ -7,9 +7,14 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { USER_API_ENDPOINT } from "@/utils/data";
 import { toast } from "sonner";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "@/redux/authSlice";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 const Register = () => {
   const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { loading } = useSelector((state) => state.auth);
   const [data, setData] = useState({
     fullName: "",
     email: "",
@@ -26,6 +31,7 @@ const Register = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(setLoading(true));
     const formData = new FormData();
     formData.append("fullName", data.fullName);
     formData.append("email", data.email);
@@ -50,9 +56,11 @@ const Register = () => {
         toast.success(res.data.message);
       }
     } catch (error) {
-        console.log(error.response.data);
-        toast.error(error.response.data?.message)
-     
+      console.log(error.response.data);
+      toast.error(error.response.data?.message);
+    }
+    finally{
+      dispatch(setLoading(false));
     }
   };
   return (
@@ -139,13 +147,22 @@ const Register = () => {
               className="cursor-pointer"
             ></Input>
           </div>
+          {loading ? (
+            <>
+              <Button>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin"></Loader2>
+                Loading...
+              </Button>
+            </>
+          ) : (
+            <button
+              type="submit"
+              className=" my-3 w-full bg-[#022bf8] hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-md mt-5"
+            >
+              Register
+            </button>
+          )}
 
-          <button
-            type="submit"
-            className=" my-3 w-full bg-[#022bf8] hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-md mt-5"
-          >
-            Register
-          </button>
           <p className="text-gray-500 text-md my-2">
             Already have an account?{" "}
             <Link to="/login" className="text-blue-700">

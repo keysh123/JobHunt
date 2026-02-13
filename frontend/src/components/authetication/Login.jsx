@@ -7,8 +7,15 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "sonner";
 import { USER_API_ENDPOINT } from "@/utils/data";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "@/redux/authSlice";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 const Login = () => {
-    const navigate= useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
+
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -18,11 +25,11 @@ const Login = () => {
     setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-   const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
- 
-  
+
     try {
+      await dispatch(setLoading(true));
       const res = await axios.post(`${USER_API_ENDPOINT}/login`, data, {
         headers: {
           "Content-Type": "application/json",
@@ -35,8 +42,10 @@ const Login = () => {
         toast.success(res.data.message);
       }
     } catch (error) {
-        console.log(error.response?.data || error);
-        toast.error(error.response.data?.message)
+      console.log(error.response?.data || error);
+      toast.error(error.response.data?.message);
+    } finally {
+      await dispatch(setLoading(false));
     }
   };
   return (
@@ -93,10 +102,21 @@ const Login = () => {
               </div>
             </RadioGroup>
           </div>
-
-          <button type="submit" className=" my-3 w-full bg-[#022bf8] hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-md mt-5">
-            Login
-          </button>
+          {loading ? (
+            <>
+              <Button>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin"></Loader2>
+                Loading...
+              </Button>
+            </>
+          ) : (
+            <button
+              type="submit"
+              className=" my-3 w-full bg-[#022bf8] hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-md mt-5"
+            >
+              Login
+            </button>
+          )}
           <p className="text-gray-500 text-md my-2">
             Don't have an account?{" "}
             <Link to="/register" className="text-blue-700">
