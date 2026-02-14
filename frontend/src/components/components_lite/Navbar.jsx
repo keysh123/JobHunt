@@ -12,7 +12,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
         <div>
           <h1 className="text-2xl font-bold">
-            Job <span className="text-[#022bf8]">Portal</span>
+            Job <span className="text-[#6A38C2]">Portal</span>
           </h1>
         </div>
         <div className="flex items-center gap-10">
@@ -28,7 +28,7 @@ const Navbar = () => {
             <Button variant="outline" className="cursor-pointer">Login</Button>
             </Link>
             <Link to={'/register'}>
-            <Button className="bg-[#022bf8] hover:bg-blue-500 cursor-pointer">Register</Button>
+            <Button className="bg-[#6A38C2] hover:bg-blue-500 cursor-pointer">Register</Button>
             </Link>
             </div>
             </>

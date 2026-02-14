@@ -2,7 +2,10 @@ import React from 'react'
 
 const LatestJobs = () => {
   return (
-    <div>LatestJobs</div>
+    <div>
+      <h2>Latest & Top Job Openings</h2>
+      {/* JobCards */}
+    </div>
   )
 }
 
