@@ -1,12 +1,30 @@
-import React from 'react'
+import React from "react";
+import JobCard from "./JobCard";
 
 const LatestJobs = () => {
-  return (
-    <div>
-      <h2>Latest & Top Job Openings</h2>
-      {/* JobCards */}
-    </div>
-  )
-}
+  const randomJobs = [1, 2, 3, 4, 5, 6];
 
-export default LatestJobs
+  return (
+    <section className="max-w-7xl mx-auto my-20 px-6">
+      
+      {/* Heading */}
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-bold">
+          Latest & Top <span className="text-[#6A38C2]">Job Openings</span>
+        </h2>
+        <p className="text-gray-500 mt-2">
+          Discover the newest opportunities from top companies.
+        </p>
+      </div>
+
+      {/* Job Cards */}
+      <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+        {randomJobs.slice(0, 6).map((job, i) => (
+          <JobCard key={i} />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default LatestJobs;
