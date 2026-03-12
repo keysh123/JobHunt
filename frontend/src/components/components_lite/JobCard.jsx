@@ -1,8 +1,11 @@
 import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 const JobCard = () => {
+  const navigate = useNavigate();
+  const jobID="bhsbj"
   return (
     <Card className="hover:shadow-lg transition duration-300 cursor-pointer">
       <CardContent className="p-5">
@@ -44,7 +47,9 @@ const JobCard = () => {
 
         {/* Buttons */}
         <div className="flex flex-col gap-3">
-          <Button variant="outline" className="w-full">
+          <Button onClick={()=>{
+            navigate(`/description/${jobID}`)
+          }} variant="outline" className="w-full">
             Details
           </Button>
 

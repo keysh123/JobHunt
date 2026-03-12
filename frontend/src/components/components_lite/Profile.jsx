@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { useSelector } from "react-redux";
 import AppliedJobs from "./AppliedJobs";
+import EditProfileModal from "./EditProfileModal";
 
 const Profile = () => {
   const { user } = useSelector((state) => state.auth);
+  const [openModal,setOpenModal] = useState(false)
 
   return (
     <section className="max-w-5xl mx-auto px-6 py-10">
@@ -26,7 +28,9 @@ const Profile = () => {
 
         </div>
 
-        <Button className="bg-[#6A38C2] hover:bg-[#5b30a6]">
+        <Button className="bg-[#6A38C2] hover:bg-[#5b30a6]" onClick={()=>{
+          setOpenModal(true)
+        }}>
           Edit Profile
         </Button>
       </div>
@@ -74,6 +78,9 @@ const Profile = () => {
 
       {/* Applied Jobs */}
       <AppliedJobs />
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal setOpenModal={setOpenModal} openModal={openModal} />
 
     </section>
   );

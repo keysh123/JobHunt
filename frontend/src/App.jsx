@@ -8,6 +8,7 @@ import Jobs from "./components/components_lite/Jobs";
 import Layout from "./components/components_lite/Layout";
 import Browse from "./components/components_lite/Browse";
 import Profile from "./components/components_lite/Profile";
+import Description from "./components/components_lite/Description";
 
 const appRouter = createBrowserRouter([
   {
@@ -19,7 +20,8 @@ const appRouter = createBrowserRouter([
       { path: "/register", element: <Register /> },
       { path: "/jobs", element: <Jobs /> },
       {path: "/browse" , element : <Browse/>},
-      {path: "/profile" , element : <Profile/>}
+      {path: "/profile" , element : <Profile/>},
+      {path : "/description/:id" , element: <Description/>}
     ]
   }
 ]);
