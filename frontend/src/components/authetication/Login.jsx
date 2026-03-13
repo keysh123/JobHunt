@@ -36,7 +36,7 @@ const Login = () => {
         },
         withCredentials: true,
       });
-      console.log(res);
+      console.log(res); 
       if (res.data.success) {
        await dispatch(setUser(res.data.user))
         navigate("/");
