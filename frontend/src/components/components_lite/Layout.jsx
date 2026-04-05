@@ -6,8 +6,9 @@ import Footer from "./Footer";
 const Layout = () => {
   return (
     <>
-      <Navbar
-       />
+    <div className="sticky top-0  z-50 bg-white border-b">
+      <Navbar/>
+      </div>
       <Outlet />
       <Footer />
     </>
