@@ -7,8 +7,8 @@ import userRoutes from "./routes/user.route.js";
 import companyRoutes from "./routes/company.route.js";
 import jobRoutes from "./routes/job.route.js";
 import applicationRoutes from "./routes/application.route.js";
-import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from './swagger-output.json' assert { type: 'json' };
+// import swaggerUi from 'swagger-ui-express';
+// import swaggerDocument from './swagger-output.json' assert { type: 'json' };
 
 dotenv.config();
 const app = express();
@@ -30,7 +30,7 @@ app.use('/api/job', jobRoutes);
 app.use("/api/application", applicationRoutes);
 
 // Swagger docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {

@@ -33,8 +33,9 @@ const userSchema = new mongoose.Schema(
         },
       ],
       resume: {
-        type: String,
-      },
+  public_id: String,
+  url: String
+},
       resumeOrignalName: {
         type: String,
       },

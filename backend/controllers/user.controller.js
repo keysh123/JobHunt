@@ -2,7 +2,9 @@ import {User} from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
-
+import cloudinary from "cloudinary"
+import dotenv from "dotenv";
+dotenv.config();
 export const register = async (req, res) => {
   try {
     const { fullName, email, phoneNo, password, role } = req.body;
@@ -107,6 +109,11 @@ export const logout = async (req, res) => {
       .json({ message: "Error logging out user", success: false });
   }
 };
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API,      // rename to API_KEY is better
+  api_secret: process.env.API_SECRET,  // make sure name matches
+});
 
 export const updateProfile = async (req, res) => {
   try {
@@ -115,10 +122,19 @@ export const updateProfile = async (req, res) => {
     const skillsArray = skills
       ? skills.split(",").map((skill) => skill.trim())
       : [];
-
-      const file = req.file
+      let cloudinaryResponse = null
+      let file = null
+    if(req.file){
+      console.log("file");
+      
+      file = req.file
       const fileUri = getDataUri(file)
-      const cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content)
+       cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content,{
+  resource_type: "raw"
+})
+console.log(cloudinaryResponse);
+
+    }
 
     const userId = req.userId;
     const user = await User.findById(userId);
