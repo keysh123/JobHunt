@@ -10,17 +10,19 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
+import { useSelector } from "react-redux";
 
 const jobsArray = [1, 2, 3, 4, 5, 6];
 
 const Jobs = () => {
   const jobsPerPage = 4;
+  const {allJobs} = useSelector((store)=>store.job)
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(jobsArray.length / jobsPerPage);
 
   const startIndex = (currentPage - 1) * jobsPerPage;
-  const currentJobs = jobsArray.slice(startIndex, startIndex + jobsPerPage);
+  const currentJobs = allJobs.slice(startIndex, startIndex + jobsPerPage);
 
   return (
     // <section className="max-w-7xl mx-auto px-6 py-10">
@@ -94,7 +96,7 @@ const Jobs = () => {
     <div className="flex-1  flex flex-col gap-6">
 
       {currentJobs.map((job, i) => (
-        <JobCard key={i} />
+        <JobCard key={i} job={job} />
       ))}
 
       {/* Pagination */}

@@ -1,41 +1,40 @@
 import React from "react";
 import { Button } from "../ui/button";
+import { useParams } from "react-router-dom";
+import useSingleJob from "@/hooks/useSingleJob";
+import { useSelector } from "react-redux";
 
 const Description = () => {
-  const isApplied = true;
+  const params = useParams();
+  const id = params.id;
+  
+  
 
-  const job = {
-    title: "Frontend Developer",
-    description:
-      "We are looking for a React developer to build scalable UI applications and collaborate with cross-functional teams.",
-    requirements: ["React", "JavaScript", "Tailwind CSS", "REST APIs"],
-    salary: 120000,
-    location: "Berlin, Germany",
-    jobType: "Full Time",
-    experience: 2,
-    position: 4,
-  };
+  useSingleJob(id); // fills Redux
 
-  const company = {
-    name: "Microsoft",
-    location: "Berlin",
-    website: "https://microsoft.com",
-    description:
-      "Microsoft builds enterprise and cloud solutions used by millions worldwide.",
-    logo: "https://logo.clearbit.com/microsoft.com",
-  };
+  const { selectedJob } = useSelector((store) => store.job);
+  const {user} = useSelector((store)=>store.auth)
+
+  if (!selectedJob) return <p>Loading...</p>;
+
+ const isApplied = selectedJob.applications?.some(
+  (app) => app.applicant === user?._id
+);
 
   return (
     <section className="max-w-7xl mx-auto px-6 py-12">
       <div className="grid grid-cols-3 gap-10">
 
-        {/* LEFT SIDE */}
+        {/* LEFT */}
         <div className="col-span-2">
 
-          <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            {selectedJob.title}
+          </h1>
 
           <p className="text-gray-500 mb-8">
-            {company.name} • {job.location} • {job.experience} yrs experience
+            {selectedJob.company?.name} • {selectedJob.location} •{" "}
+            {selectedJob.experience} yrs experience
           </p>
 
           {/* JOB INFO */}
@@ -43,36 +42,46 @@ const Description = () => {
 
             <div className="border rounded-lg p-4">
               <p className="text-sm text-gray-500">Salary</p>
-              <p className="font-semibold text-lg">${job.salary}</p>
+              <p className="font-semibold text-lg">
+                ₹{selectedJob.salary}
+              </p>
             </div>
 
             <div className="border rounded-lg p-4">
               <p className="text-sm text-gray-500">Job Type</p>
-              <p className="font-semibold text-lg">{job.jobType}</p>
+              <p className="font-semibold text-lg">
+                {selectedJob.jobType}
+              </p>
             </div>
 
             <div className="border rounded-lg p-4">
               <p className="text-sm text-gray-500">Openings</p>
-              <p className="font-semibold text-lg">{job.position}</p>
+              <p className="font-semibold text-lg">
+                {selectedJob.position}
+              </p>
             </div>
 
           </div>
 
           {/* DESCRIPTION */}
           <div className="mb-10">
-            <h2 className="text-xl font-semibold mb-3">Job Description</h2>
+            <h2 className="text-xl font-semibold mb-3">
+              Job Description
+            </h2>
 
             <p className="text-gray-600 leading-relaxed">
-              {job.description}
+              {selectedJob.description}
             </p>
           </div>
 
           {/* REQUIREMENTS */}
           <div>
-            <h2 className="text-xl font-semibold mb-3">Requirements</h2>
+            <h2 className="text-xl font-semibold mb-3">
+              Requirements
+            </h2>
 
             <ul className="list-disc ml-6 space-y-2 text-gray-600">
-              {job.requirements.map((req, i) => (
+              {selectedJob.requirements?.map((req, i) => (
                 <li key={i}>{req}</li>
               ))}
             </ul>
@@ -80,9 +89,8 @@ const Description = () => {
 
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT */}
         <div>
-
           <div className="border rounded-xl p-6 bg-white sticky top-20 shadow-sm">
 
             <Button
@@ -100,31 +108,34 @@ const Description = () => {
             <div className="flex items-center gap-3 mb-4">
 
               <img
-                src={company.logo}
+                src={selectedJob.company?.logo}
                 className="h-12 w-12 rounded-md border"
                 alt=""
               />
 
               <div>
-                <h3 className="font-semibold">{company.name}</h3>
-                <p className="text-sm text-gray-500">{company.location}</p>
+                <h3 className="font-semibold">
+                  {selectedJob.company?.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {selectedJob.company?.location}
+                </p>
               </div>
 
             </div>
 
             <p className="text-sm text-gray-600 mb-5">
-              {company.description}
+              {selectedJob.company?.description}
             </p>
 
             <a
-              href={company.website}
+              href={selectedJob.company?.website}
               className="text-sm font-medium text-[#6A38C2]"
             >
               Visit Website
             </a>
 
           </div>
-
         </div>
 
       </div>
