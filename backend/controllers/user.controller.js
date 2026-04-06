@@ -1,13 +1,25 @@
-import {User} from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
-import cloudinary from "cloudinary"
+import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 dotenv.config();
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API, // rename to API_KEY is better
+  api_secret: process.env.API_SECRET, // make sure name matches
+});
 export const register = async (req, res) => {
   try {
     const { fullName, email, phoneNo, password, role } = req.body;
+    const file = req.file;
+    let fileUri, cloudinaryResponse;
+    if (file) {
+      fileUri =  getDataUri(file);
+      cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content);
+    }
+    console.log(cloudinaryResponse);
     if (!fullName || !email || !phoneNo || !password || !role) {
       return res
         .status(400)
@@ -26,6 +38,9 @@ export const register = async (req, res) => {
       phoneNo,
       password: hashedPassword,
       role,
+      profile: {
+        profilePhoto: cloudinaryResponse?.secure_url || null,
+      },
     });
     await newUser.save();
     return res
@@ -109,31 +124,25 @@ export const logout = async (req, res) => {
       .json({ message: "Error logging out user", success: false });
   }
 };
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API,      // rename to API_KEY is better
-  api_secret: process.env.API_SECRET,  // make sure name matches
-});
 
 export const updateProfile = async (req, res) => {
   try {
     const { fullName, email, phoneNo, bio, skills } = req.body;
-    
+
     const skillsArray = skills
       ? skills.split(",").map((skill) => skill.trim())
       : [];
-      let cloudinaryResponse = null
-      let file = null
-    if(req.file){
+    let cloudinaryResponse = null;
+    let file = null;
+    if (req.file) {
       console.log("file");
-      
-      file = req.file
-      const fileUri = getDataUri(file)
-       cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content,{
-  resource_type: "raw"
-})
-console.log(cloudinaryResponse);
 
+      file = req.file;
+      const fileUri = getDataUri(file);
+      cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content, {
+        resource_type: "raw",
+      });
+      console.log(cloudinaryResponse);
     }
 
     const userId = req.userId;
@@ -143,28 +152,28 @@ console.log(cloudinaryResponse);
         .status(404)
         .json({ message: "User not found", success: false });
     }
-    if(fullName){
-    user.fullName = fullName;
+    if (fullName) {
+      user.fullName = fullName;
     }
-    if(email){
-    user.email = email;
+    if (email) {
+      user.email = email;
     }
-    if(phoneNo){
-    user.phoneNo = phoneNo;
+    if (phoneNo) {
+      user.phoneNo = phoneNo;
     }
-    if(bio){
-    user.profile.bio = bio;
+    if (bio) {
+      user.profile.bio = bio;
     }
-    if(skills){
-    user.profile.skills =
-      skillsArray.length > 0 ? skillsArray : user.profile.skills;
+    if (skills) {
+      user.profile.skills =
+        skillsArray.length > 0 ? skillsArray : user.profile.skills;
     }
-    if(cloudinaryResponse){
+    if (cloudinaryResponse) {
       user.profile.resume = {
         public_id: cloudinaryResponse.public_id,
         url: cloudinaryResponse.secure_url,
-      }
-      user.profile.resumeOrignalName = file.originalname
+      };
+      user.profile.resumeOrignalName = file.originalname;
     }
     await user.save();
     return res.status(200).json({
