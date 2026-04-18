@@ -10,26 +10,26 @@ import axios from "axios";
 import { setUser } from "@/redux/authSlice";
 import { USER_API_ENDPOINT } from "@/utils/data";
 
-
 const Navbar = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      const response = await axios.get(`${USER_API_ENDPOINT}/logout`, { withCredentials: true });
+      const response = await axios.get(`${USER_API_ENDPOINT}/logout`, {
+        withCredentials: true,
+      });
       if (response.data.success) {
-        dispatch(setUser(null))
+        dispatch(setUser(null));
         toast.success("Logged out successfully");
-        navigate("/")
+        navigate("/");
       } else {
         toast.error("Logout failed");
       }
-      
     } catch (error) {
       console.log(error);
-      toast.error(error)      
+      toast.error(error);
     }
-  }
+  };
 
   const { user } = useSelector((state) => state.auth);
   return (
@@ -42,9 +42,19 @@ const Navbar = () => {
         </div>
         <div className="flex items-center gap-10">
           <ul className="flex font-medium items-center gap-6">
-            <Link to={"/"}>Home</Link>
-            <Link to={"/browse"}>Browse</Link>
-            <Link to={"/jobs"}>Job</Link>
+            {user && user.role === "Recruiter" ? (
+              <>
+                <Link to={"/admin/companies"}>Companies</Link>
+
+                <Link to={"/admin/jobs"}>Job</Link>
+              </>
+            ) : (
+              <>
+                <Link to={"/"}>Home</Link>
+                <Link to={"/browse"}>Browse</Link>
+                <Link to={"/jobs"}>Job</Link>
+              </>
+            )}
           </ul>
           {!user ? (
             <>
@@ -65,7 +75,11 @@ const Navbar = () => {
             <Popover>
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
-                    {user?.profile?.profilePhoto ? <AvatarImage src={user?.profile?.profilePhoto} /> : <AvatarImage src="https://github.com/shadcn.png" />}
+                  {user?.profile?.profilePhoto ? (
+                    <AvatarImage src={user?.profile?.profilePhoto} />
+                  ) : (
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                  )}
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
               </PopoverTrigger>
@@ -73,7 +87,11 @@ const Navbar = () => {
                 {/* <h1>Job Portal</h1> */}
                 <div className="flex  gap-4 space-y-2">
                   <Avatar className="cursor-pointer">
-                    {user?.profile?.profilePhoto ? <AvatarImage src={user?.profile?.profilePhoto} /> : <AvatarImage src="https://github.com/shadcn.png" />}
+                    {user?.profile?.profilePhoto ? (
+                      <AvatarImage src={user?.profile?.profilePhoto} />
+                    ) : (
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                    )}
                     {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
