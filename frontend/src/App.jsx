@@ -9,7 +9,9 @@ import Layout from "./components/components_lite/Layout";
 import Browse from "./components/components_lite/Browse";
 import Profile from "./components/components_lite/Profile";
 import Description from "./components/components_lite/Description";
-
+import ProtectedRoute from "./components/components_lite/ProtectedRoute";
+import AdminJobs from "./components/components_lite/AdminJobs";
+import Companies from "./components/components_lite/Companies";
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -19,11 +21,34 @@ const appRouter = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "/jobs", element: <Jobs /> },
-      {path: "/browse" , element : <Browse/>},
-      {path: "/profile" , element : <Profile/>},
-      {path : "/description/:id" , element: <Description/>}
-    ]
-  }
+      { path: "/browse", element: <Browse /> },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute allowedRole="student">
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      { path: "/description/:id", element: <Description /> },
+      {
+        path: "/admin/jobs",
+        element: (
+          <ProtectedRoute allowedRole="recruiter">
+            <AdminJobs />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/companies",
+        element: (
+          <ProtectedRoute allowedRole="recruiter">
+            <Companies />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
 ]);
 
 const App = () => {

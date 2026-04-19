@@ -42,7 +42,7 @@ const Navbar = () => {
         </div>
         <div className="flex items-center gap-10">
           <ul className="flex font-medium items-center gap-6">
-            {user && user.role === "Recruiter" ? (
+            {user && user.role === "recruiter" ? (
               <>
                 <Link to={"/admin/companies"}>Companies</Link>
 
@@ -103,10 +103,12 @@ const Navbar = () => {
                   </div>
                 </div>
                 <div className="flex items-start flex-col text-gray-600 mt-2">
-                  <Button variant="link">
-                    <User2 />
-                    <Link to={"/profile"}>View Profile</Link>
-                  </Button>
+                  {user && user.role === "student" && (
+                    <Button variant="link">
+                      <User2 />
+                      <Link to={"/profile"}>View Profile</Link>
+                    </Button>
+                  )}
                   <Button onClick={handleLogout} variant="link">
                     <LogOut />
                     Logout
