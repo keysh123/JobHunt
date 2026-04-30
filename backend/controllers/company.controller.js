@@ -1,11 +1,32 @@
 import { Company } from "../models/company.model.js";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "cloudinary";
+import dotenv from "dotenv";
+dotenv.config();
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API, // rename to API_KEY is better
+  api_secret: process.env.API_SECRET, // make sure name matches
+});
 export const registerCompany = async (req, res) => {
   try {
-    const { companyName , description , website,location,logo } = req.body;
+    const { companyName , description , website,location } = req.body;
+       const file = req?.file;
+      //  console.log("hoo");
+       
+    let fileUri, cloudinaryResponse;
+    if (file) {
+      fileUri =  getDataUri(file);
+      cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content);
+    }
+    // console.log("hii");
+    
     if (!companyName) {
       return res.status(400).json({ message: "Company name is required" });
     }
     const company = await Company.findOne({ name: companyName });
+    // console.log(company);
+    
     if (company) {
       return res
         .status(400)
@@ -13,7 +34,7 @@ export const registerCompany = async (req, res) => {
     }
     const newCompany = new Company({
       name: companyName,
-      description,website,location,logo,
+      description,website,location,logo : cloudinaryResponse?.secure_url || null,
       userId: req.userId,
     });
     await newCompany.save();
