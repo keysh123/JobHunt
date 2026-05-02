@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,11 +14,29 @@ import { Edit2, MoreHorizontal } from "lucide-react";
 import useGetAllCompanies from "@/hooks/useGetAllCompanies";
 import { useSelector } from "react-redux";
 
-const CompaniesTable = () => {
+const CompaniesTable = ({searchText}) => {
   useGetAllCompanies();
 
   const {allCompanies: companies } = useSelector((state) => state.company);
+  const [filteredCompanies , setFilteredCompanies] = useState([]);
+useEffect(() => {
+  if (!searchText) {
+    setFilteredCompanies(companies);
+  } else {
+      const query = searchText.toLowerCase();
+   const filtered = companies?.filter((company) => {
+  const text = `
+    ${company?.name || ""}
+    ${company?.description || ""}
+    ${company?.location || ""}
+    ${company?.website || ""}
+  `.toLowerCase();
 
+  return text.includes(query);
+});
+    setFilteredCompanies(filtered);
+  }
+}, [companies, searchText]);
   return (
     <div className="bg-white border rounded-xl p-4">
       <Table>
@@ -34,8 +52,8 @@ const CompaniesTable = () => {
         </TableHeader>
 
         <TableBody>
-          {companies?.length > 0 ? (
-            companies.map((company) => (
+          {filteredCompanies?.length > 0 ? (
+            filteredCompanies.map((company) => (
               <TableRow key={company._id}>
 
                 {/* LOGO */}
