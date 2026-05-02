@@ -12,31 +12,39 @@ import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Edit2, MoreHorizontal } from "lucide-react";
 import useGetAllCompanies from "@/hooks/useGetAllCompanies";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedCompany } from "@/redux/companySlice";
+import { useNavigate } from "react-router-dom";
 
-const CompaniesTable = ({searchText}) => {
+const CompaniesTable = ({ searchText }) => {
   useGetAllCompanies();
-
-  const {allCompanies: companies } = useSelector((state) => state.company);
-  const [filteredCompanies , setFilteredCompanies] = useState([]);
-useEffect(() => {
-  if (!searchText) {
-    setFilteredCompanies(companies);
-  } else {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { allCompanies: companies } = useSelector((state) => state.company);
+  const [filteredCompanies, setFilteredCompanies] = useState([]);
+  useEffect(() => {
+    if (!searchText) {
+      setFilteredCompanies(companies);
+    } else {
       const query = searchText.toLowerCase();
-   const filtered = companies?.filter((company) => {
-  const text = `
+      const filtered = companies?.filter((company) => {
+        const text = `
     ${company?.name || ""}
     ${company?.description || ""}
     ${company?.location || ""}
     ${company?.website || ""}
   `.toLowerCase();
 
-  return text.includes(query);
-});
-    setFilteredCompanies(filtered);
-  }
-}, [companies, searchText]);
+        return text.includes(query);
+      });
+      setFilteredCompanies(filtered);
+    }
+  }, [companies, searchText]);
+
+  const handleSelectCompany = async (company) => {
+    dispatch(setSelectedCompany(company));
+    navigate(`/admin/companies/edit/${company._id}`)
+  };
   return (
     <div className="bg-white border rounded-xl p-4">
       <Table>
@@ -55,21 +63,16 @@ useEffect(() => {
           {filteredCompanies?.length > 0 ? (
             filteredCompanies.map((company) => (
               <TableRow key={company._id}>
-
                 {/* LOGO */}
                 <TableCell>
                   <Avatar>
                     <AvatarImage src={company.logo} />
-                    <AvatarFallback>
-                      {company.name?.charAt(0)}
-                    </AvatarFallback>
+                    <AvatarFallback>{company.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                 </TableCell>
 
                 {/* NAME */}
-                <TableCell className="font-medium">
-                  {company.name}
-                </TableCell>
+                <TableCell className="font-medium">{company.name}</TableCell>
 
                 {/* DATE */}
                 <TableCell>
@@ -83,7 +86,12 @@ useEffect(() => {
                       <MoreHorizontal />
                     </PopoverTrigger>
 
-                    <PopoverContent className="w-32">
+                    <PopoverContent
+                      className="w-32"
+                      onClick={() => {
+                        handleSelectCompany(company);
+                      }}
+                    >
                       <div className="flex items-center gap-2 cursor-pointer">
                         <Edit2 className="w-4" />
                         <span>Edit</span>
@@ -91,7 +99,6 @@ useEffect(() => {
                     </PopoverContent>
                   </Popover>
                 </TableCell>
-
               </TableRow>
             ))
           ) : (
@@ -102,7 +109,6 @@ useEffect(() => {
             </TableRow>
           )}
         </TableBody>
-
       </Table>
     </div>
   );

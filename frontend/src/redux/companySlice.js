@@ -13,6 +13,8 @@ export const companySlice = createSlice({
       state.allCompanies = action.payload;
     },
     setSelectedCompany: (state, action) => {
+        console.log("hii",action);
+        
       state.selectedCompany = action.payload;
     },
   },

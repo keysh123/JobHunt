@@ -90,20 +90,64 @@ export const getCompanyById = async (req, res) => {
 };
 export const updateCompany = async (req, res) => {
   try {
-    const { name, description, website, location, logo } = req.body;
+    const companyId = req.params.id;
+    const { name, description, website, location } = req.body;
+    const file = req?.file;
 
-    const updateData = { name, description, website, location, logo };
-    const company = await Company.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
-    if (!company) {
-      return res.status(404).json({ message: "No company found" });
+    let cloudinaryResponse;
+
+    // ✅ Upload new logo if provided
+    if (file) {
+      const fileUri = getDataUri(file);
+      cloudinaryResponse = await cloudinary.uploader.upload(
+        fileUri.content
+      );
     }
-    return res.status(200).json({ message: "Company updated", success: true });
+
+    // ✅ Check if company exists
+    const existingCompany = await Company.findById(companyId);
+    if (!existingCompany) {
+      return res.status(404).json({
+        message: "Company not found",
+        success: false,
+      });
+    }
+
+    // ✅ Optional: prevent duplicate name (if changed)
+    if (name && name !== existingCompany.name) {
+      const duplicate = await Company.findOne({ name });
+      if (duplicate) {
+        return res.status(400).json({
+          message: "Company name already exists",
+          success: false,
+        });
+      }
+    }
+
+    // ✅ Update only provided fields
+    const updatedCompany = await Company.findByIdAndUpdate(
+      companyId,
+      {
+        name: name || existingCompany.name,
+        description: description || existingCompany.description,
+        website: website || existingCompany.website,
+        location: location || existingCompany.location,
+        logo: cloudinaryResponse?.secure_url || existingCompany.logo,
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      message: "Company updated successfully",
+      success: true,
+      company: updatedCompany,
+    });
+
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ message: "Internal Server error", success: false });
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
   }
 };
