@@ -1,8 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
+import { useNavigate } from 'react-router-dom'
+import AdminJobsTable from './AdminJobsTable'
 
 const AdminJobs = () => {
+    const navigate = useNavigate()
+    const [searchText,setSearchText] = useState("")
   return (
-    <div>AdminJobs</div>
+    <div>
+        <div className='flex items-center justify-between'>
+        <Input placeholder="Filter by Name" className="w-fit" value={searchText} onChange={(e)=>{setSearchText(e.target.value)}}/>
+        <Button onClick={()=>{
+            navigate("/admin/jobs/create")
+        }}>Post New Job</Button>
+        </div>
+        <div>
+            <AdminJobsTable searchText={searchText}/>
+        </div>
+    </div>
   )
 }
 

@@ -4,7 +4,7 @@ import { getAllJobs, getJobById, getJobsByAdmin, postJob } from '../controllers/
 const router = express.Router()
 router.post('/post',autheticateToken,postJob)
 router.get('/getAllJobs',autheticateToken,getAllJobs)
-router.get('/getAdminJob',autheticateToken,getJobsByAdmin)
+router.get('/getAdminJobs',autheticateToken,getJobsByAdmin)
 router.get('/getJob/:id',autheticateToken,getJobById)
 
 export default router;

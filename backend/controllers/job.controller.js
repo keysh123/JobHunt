@@ -1,5 +1,7 @@
 import { Job } from "../models/job.model.js";
 export const postJob = async (req, res) => {
+  console.log("hjob");
+
   try {
     const {
       title,
@@ -12,27 +14,41 @@ export const postJob = async (req, res) => {
       company,
       experience,
     } = req.body;
+
     const userId = req.userId;
+
     if (
-      !title ||
-      !description ||
+      !title?.trim() ||
+      !description?.trim() ||
       !requirements ||
-      !salary ||
-      !location ||
-      !jobType ||
-      !position ||
+      salary == null ||
+      !location?.trim() ||
+      !jobType?.trim() ||
+      position == null ||
       !company ||
-      !experience
+      experience == null
     ) {
       return res.status(400).json({
         message: "All fields are required",
         success: false,
       });
     }
+
+    // ✅ handle both string and array
+    let requirementsArray = [];
+
+    if (Array.isArray(requirements)) {
+      requirementsArray = requirements;
+    } else {
+      requirementsArray = requirements
+        .split(",")
+        .map((item) => item.trim());
+    }
+
     const newJob = new Job({
       title,
       description,
-      requirements: requirements.split(","),
+      requirements: requirementsArray,
       salary,
       location,
       jobType,
@@ -41,17 +57,22 @@ export const postJob = async (req, res) => {
       company,
       createdBy: userId,
     });
+
     await newJob.save();
+
     return res.status(201).json({
       message: "Job posted successfully",
       success: true,
       newJob,
     });
+
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ message: "Internal Server error", success: false });
+
+    return res.status(500).json({
+      message: "Internal Server error",
+      success: false,
+    });
   }
 };
 export const getAllJobs = async (req, res) => {

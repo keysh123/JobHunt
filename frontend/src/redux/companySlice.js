@@ -8,12 +8,12 @@ export const companySlice = createSlice({
   },
   reducers: {
     setCompanies: (state, action) => {
-        console.log(action.payload);
+       
         
       state.allCompanies = action.payload;
     },
     setSelectedCompany: (state, action) => {
-        console.log("hii",action);
+       
         
       state.selectedCompany = action.payload;
     },
