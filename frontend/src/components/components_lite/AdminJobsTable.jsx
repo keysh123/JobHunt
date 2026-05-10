@@ -19,6 +19,11 @@ import { useNavigate } from "react-router-dom";
 
 import useGetAllJobs from "@/hooks/useGetAllJobs";
 import { setSelectedJob } from "@/redux/jobSlice";
+import { Eye, Trash2 } from "lucide-react";
+import axios from "axios";
+import { toast } from "sonner";
+import JobViewModal from "./JobViewModal";
+import { JOB_API_ENDPOINT } from "@/utils/data";
 
 const AdminJobsTable = ({ searchText }) => {
   useGetAllJobs();
@@ -29,6 +34,8 @@ const AdminJobsTable = ({ searchText }) => {
   const { allJobs: jobs } = useSelector((store) => store.job);
 
   const [filteredJobs, setFilteredJobs] = useState([]);
+  const [openView, setOpenView] = useState(false);
+  const [selectedViewJob, setSelectedViewJob] = useState(null);
 
   useEffect(() => {
     if (!searchText) {
@@ -57,6 +64,27 @@ const AdminJobsTable = ({ searchText }) => {
 
     navigate(`/admin/jobs/edit/${job._id}`);
   };
+  const handleViewJob = (job) => {
+    setSelectedViewJob(job);
+    setOpenView(true);
+  };
+
+  const handleDeleteJob = async (id) => {
+    try {
+      const res = await axios.delete(`${JOB_API_ENDPOINT}/delete/${id}`, {
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        toast.success("Job deleted successfully");
+
+        setFilteredJobs((prev) => prev.filter((job) => job._id !== id));
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete job");
+    }
+  };
 
   return (
     <div className="bg-white border rounded-xl p-4">
@@ -77,7 +105,6 @@ const AdminJobsTable = ({ searchText }) => {
           {filteredJobs?.length > 0 ? (
             filteredJobs.map((job) => (
               <TableRow key={job._id}>
-
                 {/* COMPANY LOGO */}
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -88,26 +115,18 @@ const AdminJobsTable = ({ searchText }) => {
                       </AvatarFallback>
                     </Avatar>
 
-                    <span className="font-medium">
-                      {job.company?.name}
-                    </span>
+                    <span className="font-medium">{job.company?.name}</span>
                   </div>
                 </TableCell>
 
                 {/* JOB TITLE */}
-                <TableCell className="font-medium">
-                  {job.title}
-                </TableCell>
+                <TableCell className="font-medium">{job.title}</TableCell>
 
                 {/* LOCATION */}
-                <TableCell>
-                  {job.location}
-                </TableCell>
+                <TableCell>{job.location}</TableCell>
 
                 {/* DATE */}
-                <TableCell>
-                  {new Date(job.createdAt).toDateString()}
-                </TableCell>
+                <TableCell>{new Date(job.createdAt).toDateString()}</TableCell>
 
                 {/* ACTION */}
                 <TableCell className="text-right">
@@ -116,33 +135,52 @@ const AdminJobsTable = ({ searchText }) => {
                       <MoreHorizontal />
                     </PopoverTrigger>
 
-                    <PopoverContent className="w-32">
+                    <PopoverContent className="w-36">
+                      {/* VIEW */}
                       <div
-                        className="flex items-center gap-2 cursor-pointer"
+                        className="flex items-center gap-2 cursor-pointer mb-3"
+                        onClick={() => handleViewJob(job)}
+                      >
+                        <Eye className="w-4" />
+                        <span>View</span>
+                      </div>
+
+                      {/* EDIT */}
+                      <div
+                        className="flex items-center gap-2 cursor-pointer mb-3"
                         onClick={() => handleSelectJob(job)}
                       >
                         <Edit2 className="w-4" />
                         <span>Edit</span>
                       </div>
+
+                      {/* DELETE */}
+                      <div
+                        className="flex items-center gap-2 cursor-pointer text-red-500"
+                        onClick={() => handleDeleteJob(job._id)}
+                      >
+                        <Trash2 className="w-4" />
+                        <span>Delete</span>
+                      </div>
                     </PopoverContent>
                   </Popover>
                 </TableCell>
-
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={5}
-                className="text-center text-gray-500"
-              >
+              <TableCell colSpan={5} className="text-center text-gray-500">
                 No jobs found
               </TableCell>
             </TableRow>
           )}
         </TableBody>
-
       </Table>
+      <JobViewModal
+        open={openView}
+        setOpen={setOpenView}
+        job={selectedViewJob}
+      />
     </div>
   );
 };
