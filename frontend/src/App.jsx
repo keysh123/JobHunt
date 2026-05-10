@@ -16,6 +16,7 @@ import AddCompany from "./components/components_lite/AddCompany";
 import EditCompany from "./components/components_lite/EditCompany";
 import AddJob from "./components/components_lite/AddJob";
 import EditJob from "./components/components_lite/EditJob";
+import Applicants from "./components/components_lite/Applicants";
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -80,6 +81,14 @@ const appRouter = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRole="recruiter">
             <EditJob />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/jobs/:id/applicants",
+        element: (
+          <ProtectedRoute allowedRole="recruiter">
+            <Applicants />
           </ProtectedRoute>
         ),
       },

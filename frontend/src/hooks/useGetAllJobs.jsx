@@ -10,7 +10,7 @@ const useGetAllJobs = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchAllJobs = async () => {
-      if(user.role === "recruiter"){
+      if(user.role === "student"){
       try {
         const result = await axios.get(`${JOB_API_ENDPOINT}/getAllJobs`, {
           withCredentials: true,
@@ -24,11 +24,15 @@ const useGetAllJobs = () => {
       }
     }
     else{
+      console.log("hol");
+      
        try {
         const result = await axios.get(`${JOB_API_ENDPOINT}/getAdminJobs`, {
           withCredentials: true,
         });
         if (result.data.success) {
+          console.log(result.data);
+          
           dispatch(setJobs(result.data.jobs));
         }
       } catch (error) {
