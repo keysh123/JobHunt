@@ -122,7 +122,7 @@ export const getJobsByAdmin = async (req, res) => {
   try {
     const adminId = req.userId;
     
-    const jobs = await Job.find({ createdBy: adminId });
+    const jobs = await Job.find({ createdBy: adminId }).populate({path:'company'});
     if (!jobs) {
       return res.status(404).json({ message: "No jobs found", success: false });
     }

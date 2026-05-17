@@ -68,6 +68,9 @@ const AdminJobsTable = ({ searchText }) => {
     setSelectedViewJob(job);
     setOpenView(true);
   };
+  const handleViewApplicants = async(job) => {
+    navigate(`/admin/jobs/${job._id}/applicants`)
+  }
 
   const handleDeleteJob = async (id) => {
     try {
@@ -144,6 +147,7 @@ const AdminJobsTable = ({ searchText }) => {
                         <Eye className="w-4" />
                         <span>View</span>
                       </div>
+                      
 
                       {/* EDIT */}
                       <div
@@ -152,6 +156,13 @@ const AdminJobsTable = ({ searchText }) => {
                       >
                         <Edit2 className="w-4" />
                         <span>Edit</span>
+                      </div>
+                      <div
+                        className="flex items-center gap-2 cursor-pointer mb-3"
+                        onClick={() => handleViewApplicants(job)}
+                      >
+                        <Eye className="w-4" />
+                        <span>Applicants</span>
                       </div>
 
                       {/* DELETE */}
